@@ -1,27 +1,42 @@
 document.addEventListener('DOMContentLoaded', () => {
+  intialize();
+});
+
+function intialize() {
   const form = document.getElementById('joke-form')
-  const jokeList = document.getElementById('joke-list')
-  const newJokeLi = document.createElement('li')
-  const username = document.getElementById('name-input').value
   let joke;
 
-  function fetchJoke(){
-    fetch('https://icanhazdadjoke.com/', {
-      headers: {
-        "Accept": "application/json"
-      }
-    })
+  fetchJoke();
+  formAddEventListener(form);
+}
+
+let joke;
+
+function fetchJoke() {
+  fetch('https://icanhazdadjoke.com/', {
+    headers: {
+      "Accept": "application/json"
+    }
+  })
     .then(res => res.json())
     .then(jokeData => joke = jokeData.joke)
-  }
+}
 
+function formAddEventListener(form) {
   form.addEventListener('submit', (event) => {
+    event.preventDefault();
 
-    if(username === "") return;
-    fetchJoke()
+    username = event.target.querySelector('#name-input').value;
+    if (username === "") return;
+
+    const jokeList = document.getElementById('joke-list')
+    const newJokeLi = document.createElement('li')
+
+    fetchJoke();
+
     newJokeLi.innerHTML = `
     <span class="username">${username} says:</span> ${joke}
     `
     jokeList.appendChild(newJokeLi)
-  })
-})
+  });
+}
